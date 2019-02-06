@@ -5,7 +5,18 @@ module.exports = (sequelize, DataTypes) => {
     author: DataTypes.STRING,
     genre: DataTypes.STRING,
     year: DataTypes.INTEGER
-  }, {});
+  }, {
+    classMethods: {
+      associate: function(models) {
+        // associations can be defined here
+      }
+    },
+    instanceMethods: {
+      publishedAt: function() {
+        return dateFormat(this.createdAt, "dddd, mmmm dS, yyyy, h:MM TT");
+      },
+    }    
+  });
   Book.associate = function(models) {
     // associations can be defined here
   };
