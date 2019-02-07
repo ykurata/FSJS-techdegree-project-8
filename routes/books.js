@@ -22,6 +22,12 @@ router.post('/', function(req, res, next) {
   Book.create(req.body).then(function(book) {
     res.redirect('/books');
   }).catch(function(error){
+      if (error.name === "SequelizeValidationError"){
+        res.render("new-book", {book: Book.build(req.body), errors: error.errors});
+      } else {
+        throw error;
+      }
+  }).catch(function(error){
     res.send(500, error);
   });
 });
@@ -35,9 +41,9 @@ router.get("/:id", function(req, res, next){
     } else {
       res.render('page-not-found');
     }
-  }).catch(function(error){
-      res.send(500, error);
-   });
+  }).catch(function(err){
+    res.send(500, err);
+  });
 });
 
 /* Update book. */
@@ -51,7 +57,15 @@ router.post("/:id", function(req, res, next){
   }).then(function(){
     res.redirect('/books');
   }).catch(function(error){
-      res.send(500, error);
+      if (error.name === "SequelizeValidationError"){
+        var book = Book.build(req.body);
+        book.id = req.params.id;
+        res.render("book-detail", {book: book, errors: error.errors});
+      } else {
+        throw err;
+      }
+  }).catch(function(err){
+    res.send(500, err);
   });
 });
 
@@ -65,8 +79,8 @@ router.post("/:id/delete", function(req, res, next){
     }
   }).then(function(){
     res.redirect("/books");
-  }).catch(function(error){
-      res.send(500, error);
+  }).catch(function(err){
+    res.send(500, err);
   });
 });
 
