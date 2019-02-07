@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var Book = require("../models").Book;
 
+
 /* GET books listing. */
 router.get('/', function(req, res, next) {
   Book.findAll({order: [["createdAt", "DESC"]]}).then(function(books) {
@@ -11,9 +12,10 @@ router.get('/', function(req, res, next) {
   });
 });
 
+
 /* Create a new book form. */
 router.get('/new', function(req, res, next) {
-  res.render("new-book", {book: Book.build()});
+  res.render("new-book", {book: Book.build(req.body)});
 })
 
 
@@ -46,6 +48,7 @@ router.get("/:id", function(req, res, next){
   });
 });
 
+
 /* Update book. */
 router.post("/:id", function(req, res, next){
   Book.findById(req.params.id).then(function(book){
@@ -68,6 +71,7 @@ router.post("/:id", function(req, res, next){
     res.send(500, err);
   });
 });
+
 
 /* DELETE individual article. */
 router.post("/:id/delete", function(req, res, next){
