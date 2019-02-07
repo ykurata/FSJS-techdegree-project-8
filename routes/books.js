@@ -38,12 +38,12 @@ router.get("/:id", function(req, res, next){
    });
 });
 
-/* PUT update book. */
+/* Update book. */
 router.post("/:id", function(req, res, next){
   Book.findById(req.params.id).then(function(book){
     return book.update(req.body);
-  }).then(function(book){
-    res.redirect('/books/' + book.id);
+  }).then(function(){
+    res.redirect('/books');
   }).catch(function(error){
       res.send(500, error);
   });
