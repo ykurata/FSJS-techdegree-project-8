@@ -21,6 +21,35 @@ router.get('/new', function(req, res, next) {
 })
 
 
+/* Search route */
+router.get('/books/search', (req, res) => {
+    var { title, author, genre, year} = req.body;
+    var { term } = req.query;
+    term = term.toLowerCase();
+
+    Books.findAll({where: {[Op.or]: [
+        {
+            title: {[Op.like] : '%' + term + '%'}
+        },
+        {
+            author: {[Op.like] : '%' + term + '%'}
+        },
+        {
+            genre: {[Op.like] : '%' + term + '%'}
+        },
+        {
+            year: {[Op.like] : '%' + term + '%'}
+        }
+    ]}})
+        .then(function(books) {
+            res.render('search-results', {books: books});
+        })
+        .catch(function(err) {
+          res.send(500, err);
+        });
+});
+
+
 /* POST create books. */
 router.post('/', function(req, res, next) {
   Book.create(req.body).then(function(book) {
@@ -88,35 +117,6 @@ router.post("/:id/delete", function(req, res, next){
   }).catch(function(err){
     res.send(500, err);
   });
-});
-
-
-/* Search route */
-router.get('/books/search', (req, res) => {
-    var { title, author, genre, year} = req.body;
-    var { term } = req.query;
-    term = term.toLowerCase();
-
-    Books.findAll({where: {[Op.or]: [
-        {
-            title: {[Op.like] : '%' + term + '%'}
-        },
-        {
-            author: {[Op.like] : '%' + term + '%'}
-        },
-        {
-            genre: {[Op.like] : '%' + term + '%'}
-        },
-        {
-            year: {[Op.like] : '%' + term + '%'}
-        }
-    ]}})
-        .then(function(books) {
-            res.render('search-results', {books: books});
-        })
-        .catch(function(err) {
-          res.send(500, err);
-        });
 });
 
 
