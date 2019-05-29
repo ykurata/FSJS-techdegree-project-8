@@ -3,7 +3,9 @@ extends layout
 block content
   
   h1 Books
-  
+  form(action='/books/search')
+    input(type='search', name='term', placeholder='Search...')
+    button(type="submit") Search 
   
   p
     a.button(href='/books') Home

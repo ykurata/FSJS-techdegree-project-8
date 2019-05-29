@@ -21,13 +21,28 @@ router.get('/new', function(req, res, next) {
 })
 
 
+/* POST create books. */
+router.post('/', function(req, res, next) {
+  Book.create(req.body).then(function(book) {
+    res.redirect('/books');
+  }).catch(function(error){
+      if (error.name === "SequelizeValidationError"){
+        res.render("new-book", {book: Book.build(req.body), errors: error.errors});
+      } else {
+        throw error;
+      }
+  }).catch(function(error){
+    res.send(500, error);
+  });
+});
+
+
 /* Search route */
-router.get('/books/search', (req, res) => {
-    var { title, author, genre, year} = req.body;
+router.get('/search', (req, res) => {
     var { term } = req.query;
     term = term.toLowerCase();
 
-    Books.findAll({where: {[Op.or]: [
+    Book.findAll({where: {[Op.or]: [
         {
             title: {[Op.like] : '%' + term + '%'}
         },
@@ -50,23 +65,7 @@ router.get('/books/search', (req, res) => {
 });
 
 
-/* POST create books. */
-router.post('/', function(req, res, next) {
-  Book.create(req.body).then(function(book) {
-    res.redirect('/books');
-  }).catch(function(error){
-      if (error.name === "SequelizeValidationError"){
-        res.render("new-book", {book: Book.build(req.body), errors: error.errors});
-      } else {
-        throw error;
-      }
-  }).catch(function(error){
-    res.send(500, error);
-  });
-});
-
-
-// /* Get individual book. */
+/* Get individual book. */
 router.get("/:id", function(req, res, next){
   Book.findById(req.params.id).then(function(book){
     if(book) {
